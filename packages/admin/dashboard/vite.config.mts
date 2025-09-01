@@ -32,7 +32,6 @@ export default defineConfig(({ mode }) => {
       __STOREFRONT_URL__: JSON.stringify(STOREFRONT_URL),
     },
     server: {
-      port: 3000,
       open: true,
     },
   }

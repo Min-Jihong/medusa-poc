@@ -9,7 +9,7 @@ import {
   RemoteQueryFunction,
 } from "@medusajs/types"
 import { ContainerRegistrationKeys, defineLink, Modules } from "@medusajs/utils"
-import { createAdminUser } from "../../..//helpers/create-admin-user"
+import { createAdminUser } from "../../../helpers/create-admin-user"
 import { adminHeaders } from "../../../helpers/create-admin-user"
 
 jest.setTimeout(50000)

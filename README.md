@@ -38,37 +38,6 @@
 
 Visit the [Documentation](https://docs.medusajs.com/learn) to set up a Medusa application.
 
-### 🚀 Quick Development Setup
-
-This monorepo includes Medusa backend, admin dashboard, and storefront. To get started:
-
-```bash
-# Install dependencies
-yarn install
-
-# Setup database and configure storefront/admin integration
-yarn setup
-
-# Start all services (API, Admin Dashboard, Storefront)
-yarn dev
-
-# Or start with clean setup
-yarn dev:clean
-```
-
-#### Available Commands
-
-- `yarn setup` - Configure database, regions, sales channels, and API keys
-- `yarn dev` - Start all development servers
-- `yarn dev:clean` - Setup + start all services
-- `yarn setup:reset` - Reset and reconfigure all settings
-
-#### Access URLs
-
-- **API Server**: http://localhost:9000
-- **Admin Dashboard**: http://localhost:5173
-- **Storefront**: http://localhost:8000
-
 ## What is Medusa
 
 Medusa is an ecommerce platform with a built-in framework for customization that allows you to build custom commerce applications without reinventing core commerce logic. The framework and modules can be used to build advanced B2B or DTC ecommerce stores, marketplaces, PoS systems, service businesses, or any product that needs foundational commerce primitives. All commerce modules are open-source and freely available on npm.

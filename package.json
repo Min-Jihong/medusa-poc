@@ -24,6 +24,7 @@
     "@typescript-eslint/parser": "^6.19.0",
     "axios": "^0.21.4",
     "axios-mock-adapter": "^1.19.0",
+    "concurrently": "^9.2.1",
     "cross-env": "^7.0.3",
     "eslint": "^8.23.0",
     "eslint-config-google": "^0.14.0",
@@ -57,10 +58,6 @@
     "build": "turbo run build --concurrency=50% --no-daemon",
     "lint": "eslint --ignore-path .eslintignore --ext .js,.ts,.tsx .",
     "lint:path": "eslint --ignore-path .eslintignore --ext .js,.ts,.tsx",
-    "dev": "npx medusa develop & turbo dev --filter @medusajs/dashboard --filter @medusajs/storefront",
-    "setup": "node scripts/setup-medusa.js",
-    "setup:reset": "node scripts/setup-medusa.js --reset",
-    "dev:clean": "yarn setup && yarn dev",
     "prettier": "prettier",
     "jest": "jest",
     "test": "turbo run test --concurrency=50% --no-daemon --no-cache --force",
@@ -76,7 +73,9 @@
     "release:next": "chgstangeset publish --no-git-tags --snapshot --tag next",
     "version:next": "changeset version --snapshot next",
     "release": "changeset publish",
-    "version": "changeset version && yarn install --no-immutable"
+    "version": "changeset version && yarn install --no-immutable",
+    "dev:setup": "./scripts/dev-setup.sh",
+    "dev:start": "concurrently \"node scripts/serve.js\" \"yarn workspace @medusajs/dashboard dev\" \"yarn workspace @medusajs/storefront dev\""
   },
   "dependencies": {
     "@changesets/changelog-github": "^0.4.8",

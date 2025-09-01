@@ -1,122 +1,99 @@
-const { Modules } = require("@medusajs/utils")
-
-// 환경 변수 설정
-process.env.POSTGRES_URL =
-  process.env.POSTGRES_URL || "postgres://localhost/medusa"
-process.env.LOG_LEVEL = process.env.LOG_LEVEL || "info"
-
 module.exports = {
-  admin: {
-    disable: true,
+  "admin": {
+    "disable": false
   },
-  plugins: [],
-  projectConfig: {
-    databaseUrl: process.env.POSTGRES_URL,
-    databaseType: "postgres",
-    http: {
-      jwtSecret: "test-secret-key",
-      cookieSecret: "test-cookie-secret",
-      adminCors: "http://localhost:3000,http://localhost:8000",
-      storeCors: "http://localhost:3000,http://localhost:8000",
-      authCors: "http://localhost:3000,http://localhost:8000",
-    },
+  "plugins": [],
+  "projectConfig": {
+    "databaseUrl": "postgres://postgres:postgres@localhost:5432/medusa_standalone",
+    "databaseType": "postgres",
+    "http": {
+      "jwtSecret": "supersecret",
+      "cookieSecret": "supersecret",
+      "storeCors": "*",
+      "adminCors": "*",
+      "authCors": "*"
+    }
   },
-  featureFlags: {
-    medusa_v2: true,
-  },
-  modules: {
-    [Modules.AUTH]: {
-      resolve: "@medusajs/auth",
-      options: {
-        providers: [
+  "modules": {
+    "auth": true,
+    "user": {
+      "scope": "internal",
+      "resolve": "@medusajs/user",
+      "options": {
+        "jwt_secret": "supersecret"
+      }
+    },
+    "cache": {
+      "resolve": "@medusajs/cache-inmemory",
+      "options": {
+        "ttl": 0
+      }
+    },
+    "stock_location": true,
+    "inventory": true,
+    "file": {
+      "resolve": "@medusajs/file",
+      "options": {
+        "providers": [
           {
-            resolve: "@medusajs/auth-emailpass",
-            id: "emailpass",
-          },
-        ],
-      },
+            "resolve": "@medusajs/file-local",
+            "id": "local"
+          }
+        ]
+      }
     },
-    [Modules.USER]: {
-      scope: "internal",
-      resolve: "@medusajs/user",
-      options: {
-        jwt_secret: "test-secret-key",
-      },
-    },
-    [Modules.CACHE]: {
-      resolve: "@medusajs/cache-inmemory",
-      options: { ttl: 0 },
-    },
-    [Modules.STOCK_LOCATION]: {
-      resolve: "@medusajs/stock-location",
-      options: {},
-    },
-    [Modules.INVENTORY]: {
-      resolve: "@medusajs/inventory",
-      options: {},
-    },
-    [Modules.FILE]: {
-      resolve: "@medusajs/file",
-      options: {
-        providers: [
+    "product": true,
+    "pricing": true,
+    "promotion": true,
+    "region": true,
+    "customer": true,
+    "sales_channel": true,
+    "cart": true,
+    "workflows": true,
+    "api_key": true,
+    "store": true,
+    "tax": true,
+    "currency": true,
+    "order": true,
+    "payment": {
+      "resolve": "@medusajs/payment",
+      "options": {
+        "providers": [
           {
-            resolve: "@medusajs/file-local",
-            id: "local",
-          },
-        ],
-      },
+            "resolve": "@medusajs/payment-stripe",
+            "id": "stripe",
+            "options": {
+              "apiKey": "dummy_key_for_testing"
+            }
+          }
+        ]
+      }
     },
-    [Modules.PRODUCT]: true,
-    [Modules.PRICING]: true,
-    [Modules.PROMOTION]: true,
-    [Modules.REGION]: true,
-    [Modules.CUSTOMER]: true,
-    [Modules.SALES_CHANNEL]: true,
-    [Modules.CART]: true,
-    [Modules.WORKFLOW_ENGINE]: true,
-    [Modules.API_KEY]: true,
-    [Modules.STORE]: true,
-    [Modules.TAX]: true,
-    [Modules.CURRENCY]: true,
-    [Modules.ORDER]: true,
-    [Modules.PAYMENT]: {
-      resolve: "@medusajs/payment",
-      options: {
-        providers: [
+    "fulfillment": {
+      "options": {
+        "providers": [
           {
-            resolve: {
-              services: [
-                require("@medusajs/payment/dist/providers/system").default,
-              ],
-            },
-            id: "default",
-          },
-        ],
-      },
+            "resolve": "@medusajs/fulfillment-manual",
+            "id": "manual"
+          }
+        ]
+      }
     },
-    [Modules.FULFILLMENT]: {
-      options: {
-        providers: [
+    "notification": {
+      "options": {
+        "providers": [
           {
-            resolve: "@medusajs/fulfillment-manual",
-            id: "manual",
-          },
-        ],
-      },
-    },
-    [Modules.NOTIFICATION]: {
-      options: {
-        providers: [
-          {
-            resolve: "@medusajs/notification-local",
-            id: "local",
-            options: {
-              name: "Local Notification Provider",
-              channels: ["log", "email"],
-            },
-          },
-        ],
-      },
-    },
-  },
+            "resolve": "@medusajs/notification-local",
+            "id": "local-notification-provider",
+            "options": {
+              "name": "Local Notification Provider",
+              "channels": [
+                "log"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
 }

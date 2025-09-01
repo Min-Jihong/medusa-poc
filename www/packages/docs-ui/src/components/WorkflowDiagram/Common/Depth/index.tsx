@@ -2,8 +2,8 @@
 
 import React from "react"
 import { WorkflowStepUi } from "types"
-import { WorkflowDiagramStepNode } from "../../Common/Node"
-import { WorkflowDiagramLine } from "../../Common/Line"
+import { WorkflowDiagramStepNode } from "../Node"
+import { WorkflowDiagramLine } from "../Line"
 
 export type WorkflowDiagramDepthProps = {
   cluster: WorkflowStepUi[]
@@ -16,7 +16,7 @@ export const WorkflowDiagramDepth = ({
 }: WorkflowDiagramDepthProps) => {
   return (
     <div className="flex items-start">
-      <div className="flex flex-col justify-center gap-y-docs_0.5">
+      <div className="gap-y-docs_0.5 flex flex-col justify-center">
         {cluster.map((step, index) => (
           <WorkflowDiagramStepNode key={`${step.name}-${index}`} step={step} />
         ))}

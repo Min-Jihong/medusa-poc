@@ -8,7 +8,8 @@ console.log("🚀 Medusa Storefront & Admin Setup Script")
 console.log("==========================================\n")
 
 // PostgreSQL 연결 정보
-const DATABASE_URL = process.env.DATABASE_URL || "postgres://localhost/medusa"
+const DATABASE_URL =
+  process.env.DATABASE_URL || "postgres://localhost/medusa_test"
 
 // 색상 출력 함수
 const colors = {
@@ -32,29 +33,6 @@ function runQuery(query) {
     }
     console.log(colors.yellow(`⚠️  Query warning: ${error.message}`))
     return null
-  }
-}
-
-// 환경 변수 업데이트 함수
-function updateEnvFile(filePath, key, value) {
-  try {
-    if (fs.existsSync(filePath)) {
-      let content = fs.readFileSync(filePath, "utf8")
-
-      // 기존 키가 있으면 업데이트, 없으면 추가
-      if (content.includes(`${key}=`)) {
-        content = content.replace(new RegExp(`${key}=.*`), `${key}=${value}`)
-      } else {
-        content += `\n${key}=${value}`
-      }
-
-      fs.writeFileSync(filePath, content)
-      console.log(colors.green(`✅ Updated ${filePath}`))
-    } else {
-      console.log(colors.yellow(`⚠️  File not found: ${filePath}`))
-    }
-  } catch (error) {
-    console.log(colors.red(`❌ Error updating ${filePath}: ${error.message}`))
   }
 }
 
@@ -108,8 +86,8 @@ async function setupMedusa() {
       console.log(colors.yellow("⚠️  Sales Channel already exists"))
     }
 
-    console.log(colors.blue("\n5. Getting Publishable API Key..."))
-    const apiKeyResult = runQuery(
+    console.log(colors.blue("\n5. Getting or Creating Publishable API Key..."))
+    let apiKeyResult = runQuery(
       "SELECT id, token FROM api_key WHERE type = 'publishable' LIMIT 1;"
     )
     let apiKeyId = null
@@ -133,9 +111,60 @@ async function setupMedusa() {
       }
     }
 
+    // API Key가 없으면 생성
     if (!apiKeyId || !apiKeyToken) {
-      console.log(colors.red("❌ No publishable API key found"))
-      return
+      console.log(
+        colors.yellow("⚠️  No publishable API key found, creating one...")
+      )
+
+      // Admin 사용자 ID 가져오기
+      const adminResult = runQuery(
+        "SELECT id FROM public.user WHERE email = 'admin@example.com' LIMIT 1;"
+      )
+      let adminId = null
+      if (adminResult && !adminResult.includes("0 rows")) {
+        const lines = adminResult.split("\n")
+        for (const line of lines) {
+          if (
+            line.trim() &&
+            !line.includes("id") &&
+            !line.includes("-") &&
+            line.trim().startsWith("user_")
+          ) {
+            adminId = line.trim()
+            break
+          }
+        }
+      }
+
+      console.log(colors.blue(`Admin ID found: ${adminId}`))
+
+      // UUID와 토큰 생성
+      const crypto = require("crypto")
+      apiKeyId = `pk_${crypto.randomBytes(16).toString("hex")}`
+      apiKeyToken = `pk_${crypto.randomBytes(32).toString("hex")}`
+
+      // Salt 생성 (bcrypt용)
+      const salt = crypto.randomBytes(16).toString("hex")
+
+      const createResult = runQuery(
+        `INSERT INTO api_key (id, token, redacted, title, type, salt, created_by, created_at, updated_at) 
+         VALUES ('${apiKeyId}', '${apiKeyToken}', '${apiKeyToken.substring(
+          0,
+          7
+        )}****', 'Default Publishable Key', 'publishable', '${salt}', ${
+          adminId ? `'${adminId}'` : "NULL"
+        }, NOW(), NOW());`
+      )
+
+      if (createResult !== null) {
+        console.log(colors.green("✅ Publishable API key created"))
+      } else {
+        console.log(colors.red("❌ Failed to create API key"))
+        return
+      }
+    } else {
+      console.log(colors.green("✅ Found existing API key"))
     }
 
     console.log(colors.green(`✅ Found API Key: ${apiKeyId}`))
@@ -163,11 +192,33 @@ async function setupMedusa() {
       "storefront",
       ".env"
     )
-    updateEnvFile(
-      storefrontEnvPath,
-      "NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY",
-      apiKeyToken
-    )
+
+    // Storefront .env 템플릿 생성
+    const envTemplate = `# Your Medusa backend, should be updated to where you are hosting your server. Remember to update CORS settings for your server. See – https://docs.medusajs.com/learn/configurations/medusa-config#httpstorecors
+MEDUSA_BACKEND_URL=http://localhost:9000
+
+# Your publishable key that can be attached to sales channels. See - https://docs.medusajs.com/resources/storefront-development/publishable-api-keys
+NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=${apiKeyToken}
+
+# Your store URL, should be updated to where you are hosting your storefront.
+NEXT_PUBLIC_BASE_URL=http://localhost:8000
+
+# Your preferred default region. When middleware cannot determine the user region from the "x-vercel-country" header, the default region will be used. ISO-2 lowercase format. 
+NEXT_PUBLIC_DEFAULT_REGION=us
+
+# Your Stripe public key. See – https://docs.medusajs.com/resources/commerce-modules/payment/payment-provider/stripe
+NEXT_PUBLIC_STRIPE_KEY=
+
+# Your Next.js revalidation secret. See – https://nextjs.org/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating#on-demand-revalidation
+REVALIDATE_SECRET=supersecret
+`
+
+    try {
+      fs.writeFileSync(storefrontEnvPath, envTemplate)
+      console.log(colors.green("✅ Storefront .env file created with template"))
+    } catch (error) {
+      console.log(colors.red(`❌ Error creating .env file: ${error.message}`))
+    }
 
     console.log(colors.blue("\n8. Verifying setup..."))
     const verification = runQuery(`
@@ -194,14 +245,7 @@ async function setupMedusa() {
       console.log(colors.red("❌ Setup verification failed"))
     }
 
-    console.log(colors.blue("\n🎉 Setup completed!"))
-    console.log(colors.yellow("\n📝 Next steps:"))
-    console.log(colors.yellow("   1. Restart your development servers:"))
-    console.log(colors.yellow("      yarn dev"))
-    console.log(colors.yellow("   2. Access your applications:"))
-    console.log(colors.yellow("      • Storefront: http://localhost:8000"))
-    console.log(colors.yellow("      • Admin: http://localhost:5173"))
-    console.log(colors.yellow("      • API: http://localhost:9000"))
+    console.log(colors.blue("\n🎉 Medusa data setup completed!"))
   } catch (error) {
     console.log(colors.red(`❌ Setup failed: ${error.message}`))
     process.exit(1)

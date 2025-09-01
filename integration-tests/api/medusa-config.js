@@ -33,13 +33,27 @@ module.exports = {
     http: {
       jwtSecret: "test",
       cookieSecret: "test",
+      // Allow CORS from frontend
+      storeCors: process.env.STORE_CORS || "http://localhost:5173",
+      adminCors: process.env.ADMIN_CORS || "http://localhost:5173",
+      authCors: process.env.AUTH_CORS || "http://localhost:5173",
     },
   },
   featureFlags: {
     medusa_v2: enableMedusaV2,
   },
   modules: {
-    [Modules.AUTH]: true,
+    [Modules.AUTH]: {
+      resolve: "@medusajs/auth",
+      options: {
+        providers: [
+          {
+            resolve: "@medusajs/auth-emailpass",
+            id: "emailpass",
+          },
+        ],
+      },
+    },
     [Modules.USER]: {
       scope: "internal",
       resolve: "@medusajs/user",
