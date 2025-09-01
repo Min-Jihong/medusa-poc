@@ -7,6 +7,8 @@ checkEnvVariables()
  */
 const nextConfig = {
   reactStrictMode: true,
+  outputFileTracingRoot: __dirname,
+
   logging: {
     fetches: {
       fullUrl: true,
