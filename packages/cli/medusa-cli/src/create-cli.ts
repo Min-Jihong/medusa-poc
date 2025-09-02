@@ -37,8 +37,40 @@ function buildLocalCommands(cli, isLocalProject) {
     }
 
     try {
-      const cmdPath = resolveCwd.silent(`@medusajs/medusa/commands/${command}`)!
-      return require(cmdPath).default
+      // CLI 패키지의 루트 디렉토리에서 medusa 패키지로의 경로
+      const relativePath = `../medusa/src/commands/${command}`
+      const cmdPath = resolveCwd.silent(relativePath)
+      if (cmdPath) {
+        console.log(`Found command at: ${cmdPath}`)
+        return require(cmdPath).default
+      }
+
+      // packages 디렉토리 기준 절대 경로
+      const absolutePath = resolveCwd.silent(
+        `packages/medusa/src/commands/${command}`
+      )
+      if (absolutePath) {
+        console.log(`Found command at: ${absolutePath}`)
+        return require(absolutePath).default
+      }
+
+      // CLI 패키지의 루트 디렉토리에서 packages/medusa로의 경로
+      const cliRootPath = resolveCwd.silent(
+        `../../packages/medusa/src/commands/${command}`
+      )
+      if (cliRootPath) {
+        console.log(`Found command at: ${cliRootPath}`)
+        return require(cliRootPath).default
+      }
+
+      // 기존 경로로 시도
+      const cmdPath2 = resolveCwd.silent(`@medusajs/medusa/commands/${command}`)
+      if (cmdPath2) {
+        console.log(`Found command at: ${cmdPath2}`)
+        return require(cmdPath2).default
+      }
+
+      throw new Error(`Command not found: ${command}`)
     } catch (err) {
       console.error(err)
       cli.showHelp((s: string) => console.error(s))
