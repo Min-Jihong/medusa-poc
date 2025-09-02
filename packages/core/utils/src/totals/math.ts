@@ -8,13 +8,15 @@ export const MEDUSA_EPSILON = new BigNumber(
 )
 
 type BNInput = BigNumberInput | BigNumber
+type BigNumberInstance = InstanceType<typeof BigNumberJS>
+
 export class MathBN {
-  static convert(num: BNInput, decimalPlaces?: number): BigNumberJS {
+  static convert(num: BNInput, decimalPlaces?: number): BigNumberInstance {
     if (num == null) {
       return new BigNumberJS(0)
     }
 
-    let num_ = num
+    let num_: BigNumberInstance
     if (num instanceof BigNumber) {
       num_ = num.bigNumber!
     } else if (num instanceof BigNumberJS) {
@@ -22,17 +24,17 @@ export class MathBN {
     } else if (isDefined((num as BigNumberRawValue)?.value)) {
       num_ = new BigNumberJS((num as BigNumberRawValue).value)
     } else {
-      num_ = new BigNumberJS(num as BigNumberJS | number)
+      num_ = new BigNumberJS(num as BigNumberInstance | number)
     }
 
-    if (decimalPlaces) {
+    if (decimalPlaces !== undefined) {
       num_ = num_.decimalPlaces(decimalPlaces)
     }
 
     return num_
   }
 
-  static add(...nums: BNInput[]): BigNumberJS {
+  static add(...nums: BNInput[]): BigNumberInstance {
     let sum = new BigNumberJS(0)
     for (const num of nums) {
       const n = MathBN.convert(num)
@@ -41,11 +43,11 @@ export class MathBN {
     return sum
   }
 
-  static sum(...nums: BNInput[]): BigNumberJS {
+  static sum(...nums: BNInput[]): BigNumberInstance {
     return MathBN.add(0, ...(nums ?? [0]))
   }
 
-  static sub(...nums: BNInput[]): BigNumberJS {
+  static sub(...nums: BNInput[]): BigNumberInstance {
     let agg = MathBN.convert(nums[0])
     for (let i = 1; i < nums.length; i++) {
       const n = MathBN.convert(nums[i])
@@ -54,40 +56,40 @@ export class MathBN {
     return agg
   }
 
-  static mult(n1: BNInput, n2: BNInput): BigNumberJS {
+  static mult(n1: BNInput, n2: BNInput): BigNumberInstance {
     const num1 = MathBN.convert(n1)
     const num2 = MathBN.convert(n2)
     return num1.times(num2)
   }
 
-  static div(n1: BNInput, n2: BNInput): BigNumberJS {
+  static div(n1: BNInput, n2: BNInput): BigNumberInstance {
     const num1 = MathBN.convert(n1)
     const num2 = MathBN.convert(n2)
     return num1.dividedBy(num2)
   }
 
-  static abs(n: BNInput): BigNumberJS {
+  static abs(n: BNInput): BigNumberInstance {
     const num = MathBN.convert(n)
     return num.absoluteValue()
   }
 
-  static mod(n1: BNInput, n2: BNInput): BigNumberJS {
+  static mod(n1: BNInput, n2: BNInput): BigNumberInstance {
     const num1 = MathBN.convert(n1)
     const num2 = MathBN.convert(n2)
     return num1.modulo(num2)
   }
 
-  static exp(n: BNInput, exp = 2): BigNumberJS {
+  static exp(n: BNInput, exp = 2): BigNumberInstance {
     const num = MathBN.convert(n)
     const expBy = MathBN.convert(exp)
     return num.exponentiatedBy(expBy)
   }
 
-  static min(...nums: BNInput[]): BigNumberJS {
+  static min(...nums: BNInput[]): BigNumberInstance {
     return BigNumberJS.minimum(...nums.map((num) => MathBN.convert(num)))
   }
 
-  static max(...nums: BNInput[]): BigNumberJS {
+  static max(...nums: BNInput[]): BigNumberInstance {
     return BigNumberJS.maximum(...nums.map((num) => MathBN.convert(num)))
   }
 

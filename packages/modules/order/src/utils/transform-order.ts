@@ -10,12 +10,12 @@ import {
 // Reshape the order object to match the OrderDTO
 // This function is used to format the order object before returning to the main module methods
 export function formatOrder<T = any>(
-  order,
+  order: any,
   options: {
     entity: any
     includeTotals?: boolean
   }
-): T {
+): T | T[] {
   const isArray = Array.isArray(order)
   const orders = [...(isArray ? order : [order])]
 

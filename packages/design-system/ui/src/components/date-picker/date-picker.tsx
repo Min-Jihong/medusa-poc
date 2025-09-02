@@ -187,7 +187,11 @@ const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
             <div className="p-3">
               <TimeInput
                 value={state.timeValue}
-                onChange={state.setTimeValue}
+                onChange={(value) => {
+                  if (value !== null) {
+                    state.setTimeValue(value)
+                  }
+                }}
                 hourCycle={props.hourCycle}
               />
             </div>

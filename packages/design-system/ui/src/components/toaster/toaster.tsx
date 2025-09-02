@@ -3,8 +3,6 @@
 import * as React from "react"
 import { Toaster as Primitive } from "sonner"
 
-import { clx } from "@/utils/clx"
-
 interface ToasterProps
   extends Omit<
     React.ComponentPropsWithoutRef<typeof Primitive>,
@@ -37,7 +35,7 @@ const Toaster = ({
   /**
    * The time in milliseconds that a toast is shown before it's
    * automatically dismissed.
-   * 
+   *
    * @defaultValue 4000
    */
   duration,
@@ -48,7 +46,6 @@ const Toaster = ({
       position={position}
       gap={gap}
       offset={offset}
-      cn={clx}
       toastOptions={{
         duration,
       }}
