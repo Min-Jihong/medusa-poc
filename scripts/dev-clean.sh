@@ -6,7 +6,7 @@ DB_PORT=${DB_PORT:-5432}
 DB_USERNAME=${DB_USERNAME:-postgres}
 
 # Databases we created during dev
-DBS=("medusa_test" "medusa_standalone")
+DBS=("medusa_standalone" "medusa_standalone")
 
 echo "🧹 Cleaning local Medusa environment"
 

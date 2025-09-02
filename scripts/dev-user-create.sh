@@ -12,7 +12,7 @@ DB_HOST=${DB_HOST:-localhost}
 DB_PORT=${DB_PORT:-5432}
 DB_USERNAME=${DB_USERNAME:-postgres}
 DB_PASSWORD=${DB_PASSWORD:-postgres}
-DB_NAME=${DB_NAME:-medusa_test}
+DB_NAME=${DB_NAME:-medusa_standalone}
 ADMIN_EMAIL=${ADMIN_EMAIL:-admin@example.com}
 ADMIN_PASSWORD=${ADMIN_PASSWORD:-pass1234}
 

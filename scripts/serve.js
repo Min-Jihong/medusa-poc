@@ -7,7 +7,7 @@ const path = require("path")
 process.env.DB_HOST = process.env.DB_HOST || "localhost"
 process.env.DB_USERNAME = process.env.DB_USERNAME || "postgres"
 process.env.DB_PASSWORD = process.env.DB_PASSWORD || "postgres"
-process.env.DB_TEMP_NAME = process.env.DB_TEMP_NAME || "medusa_test"
+process.env.DB_TEMP_NAME = process.env.DB_TEMP_NAME || "medusa_standalone"
 
 // Allow local frontend origins (CORS)
 const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || "http://localhost:5173"
@@ -24,7 +24,7 @@ const integrationTestsDir = path.join(__dirname, "..", "integration-tests/api")
 console.log("🚀 Quick Start Medusa Server")
 console.log("============================")
 console.log("📁 Directory:", integrationTestsDir)
-console.log("🗄️  Database: medusa_test")
+console.log("🗄️  Database: medusa_standalone")
 console.log("🌐 Server: http://localhost:9000")
 console.log("👤 Admin: http://localhost:3000")
 console.log("🛍️  Store: http://localhost:8000")
@@ -42,7 +42,9 @@ start({
   console.log("")
   console.log("💡 Make sure:")
   console.log("   1. PostgreSQL is running")
-  console.log("   2. Database 'medusa_test' exists")
-  console.log('   3. Run: psql -U postgres -c "CREATE DATABASE medusa_test;"')
+  console.log("   2. Database 'medusa_standalone' exists")
+  console.log(
+    '   3. Run: psql -U postgres -c "CREATE DATABASE medusa_standalone;"'
+  )
   process.exit(1)
 })

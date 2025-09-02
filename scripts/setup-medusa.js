@@ -9,7 +9,7 @@ console.log("==========================================\n")
 
 // PostgreSQL 연결 정보
 const DATABASE_URL =
-  process.env.DATABASE_URL || "postgres://localhost/medusa_test"
+  process.env.DATABASE_URL || "postgres://localhost/medusa_standalone"
 
 // 색상 출력 함수
 const colors = {
