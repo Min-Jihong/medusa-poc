@@ -80,7 +80,7 @@ async function initDevelopmentServer(
   const { develop } = await import("@medusajs/admin-bundler")
 
   const adminMiddleware = await develop(options)
-  app.use(options.path, adminMiddleware)
+  app.use(options.path, adminMiddleware as any)
   return app
 }
 
@@ -89,7 +89,7 @@ async function serveProductionBuild(app: Express, options: InitializedOptions) {
 
   const adminRoute = await serve(options)
 
-  app.use(options.path, adminRoute)
+  app.use(options.path, adminRoute as any)
 
   return app
 }

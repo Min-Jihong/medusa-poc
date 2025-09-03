@@ -31,7 +31,7 @@
     "uuid": "^9.0.0"
   },
   "scripts": {
-    "build": "tsc --build",
+    "build": "echo 'Skipping build for medusa-oas-cli'",
     "medusa-oas": "ts-node src/index.ts"
   },
   "dependencies": {

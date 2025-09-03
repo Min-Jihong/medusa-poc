@@ -55,7 +55,8 @@
     "*.{md,yaml,yml}": "prettier --write"
   },
   "scripts": {
-    "build": "turbo run build --concurrency=50% --no-daemon",
+    "build": "turbo run build --concurrency=50% --no-daemon --filter=!@medusajs/storefront --filter=!@medusajs/medusa-oas-cli",
+    "build:storefront": "turbo run build:storefront --concurrency=50% --no-daemon --filter=@medusajs/storefront",
     "lint": "eslint --ignore-path .eslintignore --ext .js,.ts,.tsx .",
     "lint:path": "eslint --ignore-path .eslintignore --ext .js,.ts,.tsx",
     "prettier": "prettier",

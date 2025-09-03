@@ -5,6 +5,11 @@
       "dependsOn": ["^build"],
       "outputs": ["!node_modules/**", "!src/**", "*/**"]
     },
+    "build:storefront": {
+      "dependsOn": [],
+      "outputs": ["!node_modules/**", "!src/**", "*/**"],
+      "env": ["NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY"]
+    },
     "dev": {
       "cache": false,
       "persistent": true
